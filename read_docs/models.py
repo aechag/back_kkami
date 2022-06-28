@@ -1,4 +1,5 @@
 from io import BytesIO
+from unicodedata import name
 
 from django.db import models
 from gtts import gTTS
@@ -8,12 +9,13 @@ import tempfile
 
 class doc(models.Model):
     id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=500)
     path = models.CharField(max_length=1000)
     nbr_page_read = models.IntegerField(default=0)
 
 
     def __str__(self):
-        return  ' id : ' + str(self.id) + ' / path : ' + self.path + ' / nbrpageread : ' + str(self.nbr_page_read)
+        return  ' id : ' + str(self.id) + ' / nom : ' + str(name) + ' / path : ' + self.path + ' / nbrpageread : ' + str(self.nbr_page_read)
 
 
 class Audio(models.Model):

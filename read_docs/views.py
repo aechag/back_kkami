@@ -1,5 +1,6 @@
 import os
 from io import BytesIO
+from unicodedata import name
 
 from django.http import HttpResponse, FileResponse, JsonResponse
 
@@ -88,7 +89,7 @@ def get_audios(nbr_start, num_pdf):
     audios = Audio.objects.all().filter(num_pdf=num_pdf)
     
     for n in audios:
-        url = "http://127.0.0.1:8000/media/" + str(n.audio)
+        url = "http://192.168.124.105:8000/media/" + str(n.audio)
         list_url.append(url)
     list_url = list_url[nbr_start:]
 
@@ -97,29 +98,37 @@ def get_audios(nbr_start, num_pdf):
 #-------------------------------------------*********---------------------------------------------------
 #------------------save
 def save(file):
-    b = doc(path="read_docs/files/docs/doc.pdf")
+    b = doc(path="read_docs/files/docs/doc.pdf", name="pdf nom")
     b.save()
+
     path = "read_docs/files/docs/doc" + str(b.id) + ".pdf"
-    doc.objects.filter(id=b.id).update(path=path)
+    doc.objects.filter(id=b.id).update(path=path, name="pdf"+str(b.id))
 
     with open(path, 'wb+') as f:
         for chunk in file.chunks():
             f.write(chunk)
 
+    # x = path.split("/ ")[-1])
     return b.id
 
 #-----------------all
 def get_all(request):
     data = list(doc.objects.values())
     return JsonResponse(data, safe=False)
-
 #------------------------readpdf_by_id
+@csrf_exempt
+def read_by_id2(request):
+    pdf_id = request.POST.get('pdf_id', False)
+    nbr_page = request.POST.get('nbr_page', False)
+
+    return JsonResponse(get_audios(nbr_page, pdf_id), safe=False)
 @csrf_exempt
 def read_by_id(request):
     pdf_id = request.POST['pdf_id']
     nbr_page = request.POST['nbr_page']
 
     return JsonResponse(get_audios(int(nbr_page), pdf_id), safe=False)
+
 # *222
 @csrf_exempt
 def read_by_pdf(request):

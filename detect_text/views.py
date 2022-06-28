@@ -92,6 +92,6 @@ def playAudioFile(request):
 def get_audios(id):
     audio = Img_audio.objects.get(id=id)
 
-    url = "http://127.0.0.1:8000/media/" + str(audio.audio)
+    url = "http://192.168.124.105:8000/media/" + str(audio.audio)
 
     return url
